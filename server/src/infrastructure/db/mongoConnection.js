@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const logger = require('../logging/logger');
 
 const connectDB = async () => {
   try {
@@ -6,9 +7,9 @@ const connectDB = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    logger.info(`MongoDB Connected: ${conn.connection.host}`);
   } catch (err) {
-    console.error(`Error: ${err.message}`);
+    logger.error(`Error: ${err.message}`);
     process.exit(1);
   }
 };

@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const connectDB = require('../db/mongoConnection');
+const logger = require('../logging/logger');
 
 const app = express();
 const PORT = process.env.PORT;
@@ -14,5 +15,5 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  logger.info(`Server is running on port ${PORT}`);
 });
