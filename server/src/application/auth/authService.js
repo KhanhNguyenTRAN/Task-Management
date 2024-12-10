@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const UserService = require('../user/userService');
+const UserService = require('../../domain/user/userService');
 
 class AuthService {
   constructor() {
