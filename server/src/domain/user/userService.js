@@ -14,41 +14,61 @@ class UserService {
       if (userExists) {
         throw new Error('User already exists');
       }
-
-      // Hash password
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(userData.password, salt);
-
-      // Create user with hashed password
-      const user = await this.userRepository.create({
-        ...userData,
-        password: hashedPassword
-      });
-
+  
+      // Create user without manually hashing the password
+      const user = await this.userRepository.create(userData);
+  
       return this.generateToken(user._id);
     } catch (error) {
-      throw new Error(error);
+      throw new Error(error.message);
     }
   }
-
+  
   async authenticateUser(email, password) {
     try {
-      const user = await this.userRepository.findOne({ email: email });
-      if (user && await bcrypt.compare(password, user.password)) {
-        return this.generateToken(user._id);
-      } else {
+      const user = await this.userRepository.findByEmail(email);
+      if (!user) {
         throw new Error('Invalid credentials');
       }
+  
+      // Log the provided password and the stored hashed password
+      console.log('Provided Password:', password);
+      console.log('Stored Hashed Password:', user.password);
+  
+      const isMatch = await bcrypt.compare(password, user.password);
+      console.log('Password Match:', isMatch);
+  
+      if (!isMatch) {
+        throw new Error('Invalid credentials');
+      }
+  
+      return this.generateToken(user._id);
     } catch (error) {
-      throw new Error(error);
+      throw new Error(error.message);
     }
   }
+  
+  async findUserById(userId) {
+    try {
+      const user = await this.userRepository.findById(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      return user;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+  
 
   generateToken(userId) {
+    if (!userId) {
+      throw new Error('User ID is undefined');
+    }
     return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-      expiresIn: '1h'
+      expiresIn: process.env.JWT_EXPIRE || '1h'
     });
-  }
+  }  
 }
 
 module.exports = UserService;

@@ -22,15 +22,19 @@ class AuthService {
       const user = await this.userService.authenticateUser(email, password);
       return user;
     } catch (error) {
-      throw new Error(`Login failed: ${error.message}`);
+      throw new Error(error.message);
     }
-  }
+  }  
 
   generateToken(id) {
+    if (!id) {
+      throw new Error('User ID is undefined');
+    }
     return jwt.sign({ id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRE
+      expiresIn: process.env.JWT_EXPIRE || '1h'
     });
   }
+  
 
   async verifyToken(token) {
     return new Promise((resolve, reject) => {

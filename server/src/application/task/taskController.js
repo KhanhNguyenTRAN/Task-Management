@@ -8,7 +8,10 @@ class TaskController {
   // Create a new task
   createTask = async (req, res) => {
     try {
-      const taskData = req.body;
+      const taskData = {
+        ...req.body,
+        user: req.user.id, // Add the user ID from the token
+      };
       const task = await this.taskService.createTask(taskData);
       res.status(201).json({ success: true, data: task });
     } catch (error) {
@@ -69,6 +72,16 @@ class TaskController {
       res.status(400).json({ success: false, error: error.message });
     }
   };
+
+  searchTasks = async (req, res) => {
+    try {
+      const tasks = await this.taskService.searchTasksByCriteria(req.query, req.user.id);
+      res.status(200).json({ success: true, data: tasks });
+    } catch (error) {
+      res.status(400).json({ success: false, error: error.message });
+    }
+  };
+  
 }
 
 module.exports = new TaskController();

@@ -44,6 +44,24 @@ class TaskService {
       throw new Error(`Unable to retrieve tasks: ${error.message}`);
     }
   }
+
+  async searchTasksByCriteria(queryParams, userId) {
+    try {
+      const query = { user: userId };
+  
+      if (queryParams.title) {
+        query.title = { $regex: queryParams.title, $options: 'i' }; // Case-insensitive regex for title
+      }
+  
+      if (queryParams.status) {
+        query.status = queryParams.status; // Exact match for status
+      }
+  
+      return await this.taskRepository.find(query);
+    } catch (error) {
+      throw new Error(`Unable to search tasks: ${error.message}`);
+    }
+  }  
 }
 
 module.exports = TaskService;

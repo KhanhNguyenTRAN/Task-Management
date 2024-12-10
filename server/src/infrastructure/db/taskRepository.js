@@ -14,6 +14,15 @@ class TaskRepository extends Repository {
       throw new Error(`Unable to retrieve tasks for user: ${error}`);
     }
   }
+
+  // Add a general find method for dynamic queries
+  async find(query) {
+    try {
+      return await this.model.find(query);
+    } catch (error) {
+      throw new Error(`Unable to search tasks: ${error}`);
+    }
+  }
 }
 
 module.exports = TaskRepository;

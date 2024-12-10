@@ -8,7 +8,7 @@ class UserController {
   // Get User Profile
   getUserProfile = async (req, res) => {
     try {
-      const userId = req.params.id;  // Assuming user ID is passed as URL parameter
+      const userId = req.params.id.trim(); // Trim the user ID to remove extra spaces or newlines
       const user = await this.userService.findUserById(userId);
       if (!user) {
         return res.status(404).json({ success: false, message: 'User not found' });
@@ -17,7 +17,7 @@ class UserController {
     } catch (error) {
       res.status(500).json({ success: false, error: error.message });
     }
-  };
+  };  
 
   // Update User Profile
   updateUserProfile = async (req, res) => {
